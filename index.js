@@ -18,7 +18,9 @@ mongoose
 //   console.log('test is successful');
 // });
 
-app.use('/api/user', userRoute);
+app.use(express.json());
+
+app.use('/api/users', userRoute);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log('BackEnd Server is running!');
