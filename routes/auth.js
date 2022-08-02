@@ -1,3 +1,4 @@
+// @ts-nocheck
 const router = require('express').Router();
 const User = require('../models/user');
 const CryptoJS = require('crypto-js');
@@ -9,6 +10,7 @@ router.post('/register', async (req, res) => {
     email: req.body.email,
     password: CryptoJS.AES.encrypt(
       req.body.password,
+      // @ts-ignore
       process.env.PASS_SEC
     ).toString(),
   });
@@ -32,18 +34,22 @@ router.post('/login', async (req, res) => {
     !user && res.status(401).json('Wrong credentials!');
 
     const hashedPassword = CryptoJS.AES.decrypt(
+      // @ts-ignore
       user.password,
+      // @ts-ignore
       process.env.PASS_SEC
     );
 
-    const password = hashedPassword.toString(CryptoJS.enc.Utf8);
+    const Originalpassword = hashedPassword.toString(CryptoJS.enc.Utf8);
 
     // WRONG PASSWORD
-    password !== req.body.password &&
+    Originalpassword !== req.body.password &&
       res.status(401).json('Wrong credentials!');
 
+    const { password, ...others } = user._doc;
+
     // IF ALL IS OK
-    res.status(200).json(user);
+    res.status(200).json(others);
   } catch (err) {
     res.status(500).json(err);
   }
