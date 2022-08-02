@@ -16,7 +16,7 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-// AUTHENTICICATION
+// AUTHENTICATION
 
 const verifyTokenAndAuthorization = (req, res, next) => {
   verifyToken(req, res, () => {
