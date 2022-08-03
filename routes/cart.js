@@ -1,15 +1,20 @@
-const router = require('express').Router();
-const Product = require('../models/product');
+const Cart = require('../models/Cart');
 const {
   verifyToken,
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
-} = require('../routes/verifyToken');
+} = require('./verifyToken');
+
+const router = require('express').Router();
 
 // CREATE PRODUCT
 // ANY USER CAN CREATE ITS OWN CART
+
+//CREATE
+
 router.post('/', verifyToken, async (req, res) => {
   const newCart = new Cart(req.body);
+
   try {
     const savedCart = await newCart.save();
     res.status(200).json(savedCart);
@@ -19,7 +24,6 @@ router.post('/', verifyToken, async (req, res) => {
 });
 
 //UPDATE
-
 router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
   try {
     const updatedCart = await Cart.findByIdAndUpdate(
@@ -35,21 +39,19 @@ router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
   }
 });
 
-// DELETE
+//DELETE
 router.delete('/:id', verifyTokenAndAuthorization, async (req, res) => {
   try {
     await Cart.findByIdAndDelete(req.params.id);
-    res.status(200).json('Cart has been deleted');
+    res.status(200).json('Cart has been deleted...');
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
-// GET USER CART
-// NO TOKEN AUTHENTICATION AS EVERYBODY CAN VIEW PRODUCTS
+//GET USER CART
 router.get('/find/:userId', verifyTokenAndAuthorization, async (req, res) => {
   try {
-    // every user has just ONE cart
     const cart = await Cart.findOne({ userId: req.params.userId });
     res.status(200).json(cart);
   } catch (err) {
@@ -57,7 +59,8 @@ router.get('/find/:userId', verifyTokenAndAuthorization, async (req, res) => {
   }
 });
 
-// GET ALL
+// //GET ALL
+
 router.get('/', verifyTokenAndAdmin, async (req, res) => {
   try {
     const carts = await Cart.find();
